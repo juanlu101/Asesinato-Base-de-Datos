@@ -25,19 +25,6 @@ La solución del misterio es la misma que en el original y está verificada de p
 (el archivo `test_worker.js` reproduce el flujo completo del juego con el mismo motor
 `scripts/worker.sql.js` que usa la página; puede ejecutarse con `node test_worker.js`).
 
-## Despliegue en GitHub Pages
-
-1. Crea un repositorio nuevo en GitHub y sube **todo el contenido de esta carpeta** a la raíz
-   (o arrástralo desde la web de GitHub con *Add file → Upload files*).
-2. En el repositorio, ve a **Settings → Pages**.
-3. En *Build and deployment*, elige **Deploy from a branch**, rama `main` y carpeta `/ (root)`.
-4. Guarda. En uno o dos minutos la página estará en `https://TU_USUARIO.github.io/TU_REPOSITORIO/`.
-
-No hace falta configurar nada más: la página no usa CDNs ni recursos externos.
-
-> Nota: si abres `index.html` directamente desde el disco (`file://`), la base de datos no se
-> cargará por las restricciones del navegador. Usa GitHub Pages o un servidor local
-> (`python3 -m http.server`).
 
 ## Créditos y licencias
 
