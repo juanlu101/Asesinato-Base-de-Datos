@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>El Misterio del Asesinato en SQL</title>
+    <meta name="description" content="Usa consultas SQL para resolver un misterioso asesinato. Un ejercicio para practicar SQL.">
+
+    <link rel="stylesheet" href="css/codemirror.css">
+    <link rel="stylesheet" href="css/neat.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="scripts/codemirror.js"></script>
+    <script src="scripts/codemirrorsql.js"></script>
+    <script src="scripts/autorefresh.js"></script>
+    <script src="scripts/main.js"></script>
+    <script>
+        window.onload = () => loadData('sql-murder-mystery.db');
+    </script>
+</head>
+
+<body>
+    <header class="cabecera">
+        <h1>El Misterio del Asesinato en SQL</h1>
+        <p class="lema">¿Serás capaz de descubrir quién lo hizo?</p>
+    </header>
+
+    <main class="contenedor">
+
+        <!-- 1. ENUNCIADO -->
+        <section id="enunciado">
+            <img src="174092-clue-illustration.png" class="ilustracion" alt="Ilustración de un detective examinando un tablero de pruebas.">
+            <h2>El caso</h2>
+            <p>
+                ¡Se ha cometido un asesinato en SQL City! Un detective necesita tu ayuda: te entregó el informe
+                de la escena del crimen, pero lo has perdido. Solo recuerdas vagamente que el crimen fue un
+                <strong>asesinato</strong> (<code>asesinato</code>) que ocurrió el <strong>15 de enero de 2018</strong>
+                y que tuvo lugar en <strong>SQL City</strong>.
+            </p>
+            <p>
+                Empieza recuperando el informe de la escena del crimen correspondiente en la base de datos del
+                departamento de policía y sigue las pistas hasta dar con la persona culpable. Cuando creas saber
+                quién es, comprueba tu respuesta en la sección final de la página.
+            </p>
+            <p class="nota">
+                Pista técnica: las fechas se guardan como números enteros con el formato <code>AAAAMMDD</code>
+                (por ejemplo, el 15 de enero de 2018 es <code>20180115</code>).
+            </p>
+        </section>
+
+        <!-- 2. ESQUEMA DE LA BASE DE DATOS -->
+        <section id="esquema">
+            <h2>Esquema de la base de datos</h2>
+            <p>
+                Este es el diagrama de las tablas de la base de datos y de las relaciones entre ellas.
+                Los nombres de las tablas y de las columnas están en inglés; su contenido está en español.
+            </p>
+            <img src="schema.png" class="diagrama" alt="Diagrama del esquema de la base de datos con sus tablas y relaciones." width="1002" height="491">
+        </section>
+
+        <!-- 3. EDITOR SQL -->
+        <section id="editor">
+            <h2>Editor SQL</h2>
+            <p>
+                Escribe aquí tus consultas y pulsa <strong>Ejecutar</strong> (o Mayús + Intro) para ver los
+                resultados. Usa tu conocimiento del esquema y tus habilidades con SQL para averiguar quién
+                cometió el asesinato.
+            </p>
+
+            <sql-exercise
+                data-question="Resuelve el misterio"
+                data-comment="Cuando creas conocer la respuesta, pasa a la sección siguiente."
+                data-default-text="
+
+
+
+"></sql-exercise>
+        </section>
+
+        <!-- 4. COMPROBAR LA SOLUCIÓN -->
+        <section id="comprobar">
+            <h2>Comprueba tu solución</h2>
+            <sql-exercise
+                data-question="¿Has encontrado a la persona culpable?"
+                data-comment="Sustituye el texto entre comillas por el nombre exacto de tu sospechoso y ejecuta la consulta."
+                data-default-text="INSERT INTO solution VALUES (1, 'Escribe aquí el nombre de la persona que has encontrado');
+
+SELECT value FROM solution;"></sql-exercise>
+        </section>
+
+        <footer id="creditos">
+            <p>
+                Adaptación al español del <a href="https://mystery.knightlab.com/">SQL Murder Mystery</a>,
+                creado por Joon Park y Cathy He en el Knight Lab de la Universidad Northwestern y producido
+                para la web por Joe Germuska
+                (<a href="https://github.com/NUKnightLab/sql-mysteries">repositorio original</a>).
+                El SQL en el navegador funciona gracias a <a href="https://github.com/sql-js/sql.js/">SQL.js</a>;
+                los componentes del editor son de Zi Chong Kao (<a href="https://selectstarsql.com/">Select Star SQL</a>).
+                Ilustración de <a href="https://www.vecteezy.com/">Vecteezy</a>.
+                Código bajo licencia <a href="https://github.com/NUKnightLab/sql-mysteries/blob/master/LICENSE">MIT</a>;
+                textos y contenido bajo <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>.
+            </p>
+        </footer>
+
+    </main>
+</body>
+
+</html>
