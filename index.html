@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>El misterio del asesinato en SQL</title>
+    <meta name="description" content="Usa consultas SQL para resolver un misterioso asesinato. Un ejercicio para practicar SQL.">
+    <meta name="theme-color" content="#14233a">
+
+    <link rel="preload" href="fonts/courier-prime-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="css/codemirror.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="scripts/codemirror.js"></script>
+    <script src="scripts/codemirrorsql.js"></script>
+    <script src="scripts/autorefresh.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/pagina.js" defer></script>
+    <script>
+        window.onload = () => loadData('sql-murder-mystery.db');
+    </script>
+</head>
+
+<body>
+    <header class="portada">
+        <div class="portada-interior">
+            <div class="portada-texto">
+                <p class="expediente">Expediente nº 20180115 <span>Departamento de Policía de SQL City</span></p>
+                <h1>El misterio del asesinato en SQL</h1>
+                <p class="lema">¿Serás capaz de descubrir quién lo hizo?</p>
+                <p class="autor">Versión en español creada por <strong>Juan Luis Torralbo Muñoz</strong></p>
+            </div>
+            <figure class="portada-imagen">
+                <img src="174092-clue-illustration.png" width="1200" height="800"
+                    alt="Ilustración de un detective examinando un tablero de pruebas.">
+                <p class="sello" id="sello" role="status">Caso abierto</p>
+            </figure>
+        </div>
+    </header>
+
+    <main class="contenedor">
+
+        <!-- 1. ENUNCIADO -->
+        <section id="enunciado" class="hoja" aria-labelledby="t-caso">
+            <p class="paso" aria-hidden="true">1</p>
+            <h2 id="t-caso">El caso</h2>
+            <div class="informe">
+                <p>
+                    ¡Se ha cometido un asesinato en SQL City! Un detective necesita tu ayuda: te entregó el informe
+                    de la escena del crimen, pero lo has perdido. Solo recuerdas vagamente que el crimen fue un
+                    <mark>asesinato</mark> que ocurrió el <mark>15 de enero de 2018</mark> y que tuvo lugar en
+                    <mark>SQL City</mark>.
+                </p>
+                <p>
+                    Empieza recuperando el informe de la escena del crimen correspondiente en la base de datos del
+                    departamento de policía y sigue las pistas hasta dar con la persona culpable. Cuando creas saber
+                    quién es, comprueba tu respuesta en la sección final de la página.
+                </p>
+            </div>
+            <aside class="nota">
+                <p><strong>Pista técnica.</strong> Las fechas se guardan como números enteros con el formato
+                    <code>AAAAMMDD</code>: el 15 de enero de 2018 es <code>20180115</code>. El tipo de delito
+                    se escribe en minúsculas: <code>'asesinato'</code>.</p>
+            </aside>
+        </section>
+
+        <!-- 2. ESQUEMA DE LA BASE DE DATOS -->
+        <section id="esquema" class="hoja hoja-ancha" aria-labelledby="t-esquema">
+            <p class="paso" aria-hidden="true">2</p>
+            <h2 id="t-esquema">Esquema de la base de datos</h2>
+            <p>
+                Estas son las tablas de la base de datos y las relaciones entre ellas. Los nombres de las tablas y
+                de las columnas están en inglés; su contenido está en español. Pasa el ratón por encima de una tabla
+                (o selecciónala con el tabulador) para ver con qué otras tablas se relaciona.
+            </p>
+            <ul class="leyenda">
+                <li><span class="clave-muestra clave-pk">PK</span> clave primaria</li>
+                <li><span class="clave-muestra clave-fk">FK</span> clave ajena: apunta a la clave primaria de otra tabla</li>
+                <li><span class="tabla-muestra"></span> por aquí empieza la investigación</li>
+            </ul>
+            <div class="esquema-marco">
+                <svg class="esquema-svg" viewBox="0 0 1166 500" role="img" aria-labelledby="esquema-titulo esquema-desc" xmlns="http://www.w3.org/2000/svg">
+                <title id="esquema-titulo">Esquema de la base de datos</title>
+                <desc id="esquema-desc">Nueve tablas. person se relaciona con drivers_license mediante license_id y con income mediante ssn. interview, facebook_event_checkin y get_fit_now_member apuntan a person mediante person_id. get_fit_now_check_in apunta a get_fit_now_member mediante membership_id. crime_scene_report y solution no tienen relaciones.</desc>
+                <defs><marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0,0 L10,5 L0,10 z"/></marker><marker id="flecha-activa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-activa" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+                <g class="relaciones">
+                <path class="relacion" data-tablas="get_fit_now_check_in get_fit_now_member" d="M274,84.0 H275 V64.0 H299" />
+                <path class="relacion" data-tablas="get_fit_now_member person" d="M564,88.0 H582 V154.0 H599" />
+                <path class="relacion" data-tablas="interview person" d="M564,248.0 H582 V154.0 H599" />
+                <path class="relacion" data-tablas="facebook_event_checkin person" d="M564,344.0 H582 V154.0 H599" />
+                <path class="relacion" data-tablas="person drivers_license" d="M864,202.0 H877 V64.0 H889" />
+                <path class="relacion" data-tablas="person income" d="M864,274.0 H877 V344.0 H889" />
+                </g>
+                <g class="tabla" data-tabla="get_fit_now_check_in" tabindex="0">
+                <rect class="tabla-cuerpo" x="10" y="40" width="264" height="128" rx="3"/>
+                <rect class="tabla-cabecera" x="10" y="40" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="10" y="68" width="264" height="4"/>
+                <text class="tabla-nombre" x="22" y="61">get_fit_now_check_in</text>
+                <text class="clave clave-fk" x="20" y="88">FK</text>
+                <text class="columna columna-clave" x="46" y="88">membership_id</text>
+                <text class="tipo" x="264" y="88" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="11" y="96" width="262" height="24"/>
+                <text class="columna" x="46" y="112">check_in_date</text>
+                <text class="tipo" x="264" y="112" text-anchor="end">INTEGER</text>
+                <text class="columna" x="46" y="136">check_in_time</text>
+                <text class="tipo" x="264" y="136" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="11" y="144" width="262" height="24"/>
+                <text class="columna" x="46" y="160">check_out_time</text>
+                <text class="tipo" x="264" y="160" text-anchor="end">INTEGER</text>
+                </g>
+                <g class="tabla" data-tabla="get_fit_now_member" tabindex="0">
+                <rect class="tabla-cuerpo" x="300" y="20" width="264" height="152" rx="3"/>
+                <rect class="tabla-cabecera" x="300" y="20" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="300" y="48" width="264" height="4"/>
+                <text class="tabla-nombre" x="312" y="41">get_fit_now_member</text>
+                <text class="clave clave-pk" x="310" y="68">PK</text>
+                <text class="columna columna-clave" x="336" y="68">id</text>
+                <text class="tipo" x="554" y="68" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="301" y="76" width="262" height="24"/>
+                <text class="clave clave-fk" x="310" y="92">FK</text>
+                <text class="columna columna-clave" x="336" y="92">person_id</text>
+                <text class="tipo" x="554" y="92" text-anchor="end">INTEGER</text>
+                <text class="columna" x="336" y="116">name</text>
+                <text class="tipo" x="554" y="116" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="301" y="124" width="262" height="24"/>
+                <text class="columna" x="336" y="140">membership_start_date</text>
+                <text class="tipo" x="554" y="140" text-anchor="end">INTEGER</text>
+                <text class="columna" x="336" y="164">membership_status</text>
+                <text class="tipo" x="554" y="164" text-anchor="end">TEXT</text>
+                </g>
+                <g class="tabla" data-tabla="interview" tabindex="0">
+                <rect class="tabla-cuerpo" x="300" y="204" width="264" height="80" rx="3"/>
+                <rect class="tabla-cabecera" x="300" y="204" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="300" y="232" width="264" height="4"/>
+                <text class="tabla-nombre" x="312" y="225">interview</text>
+                <text class="clave clave-fk" x="310" y="252">FK</text>
+                <text class="columna columna-clave" x="336" y="252">person_id</text>
+                <text class="tipo" x="554" y="252" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="301" y="260" width="262" height="24"/>
+                <text class="columna" x="336" y="276">transcript</text>
+                <text class="tipo" x="554" y="276" text-anchor="end">TEXT</text>
+                </g>
+                <g class="tabla" data-tabla="facebook_event_checkin" tabindex="0">
+                <rect class="tabla-cuerpo" x="300" y="300" width="264" height="128" rx="3"/>
+                <rect class="tabla-cabecera" x="300" y="300" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="300" y="328" width="264" height="4"/>
+                <text class="tabla-nombre" x="312" y="321">facebook_event_checkin</text>
+                <text class="clave clave-fk" x="310" y="348">FK</text>
+                <text class="columna columna-clave" x="336" y="348">person_id</text>
+                <text class="tipo" x="554" y="348" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="301" y="356" width="262" height="24"/>
+                <text class="columna" x="336" y="372">event_id</text>
+                <text class="tipo" x="554" y="372" text-anchor="end">INTEGER</text>
+                <text class="columna" x="336" y="396">event_name</text>
+                <text class="tipo" x="554" y="396" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="301" y="404" width="262" height="24"/>
+                <text class="columna" x="336" y="420">date</text>
+                <text class="tipo" x="554" y="420" text-anchor="end">INTEGER</text>
+                </g>
+                <g class="tabla" data-tabla="person" tabindex="0">
+                <rect class="tabla-cuerpo" x="600" y="110" width="264" height="176" rx="3"/>
+                <rect class="tabla-cabecera" x="600" y="110" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="600" y="138" width="264" height="4"/>
+                <text class="tabla-nombre" x="612" y="131">person</text>
+                <text class="clave clave-pk" x="610" y="158">PK</text>
+                <text class="columna columna-clave" x="636" y="158">id</text>
+                <text class="tipo" x="854" y="158" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="601" y="166" width="262" height="24"/>
+                <text class="columna" x="636" y="182">name</text>
+                <text class="tipo" x="854" y="182" text-anchor="end">TEXT</text>
+                <text class="clave clave-fk" x="610" y="206">FK</text>
+                <text class="columna columna-clave" x="636" y="206">license_id</text>
+                <text class="tipo" x="854" y="206" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="601" y="214" width="262" height="24"/>
+                <text class="columna" x="636" y="230">address_number</text>
+                <text class="tipo" x="854" y="230" text-anchor="end">INTEGER</text>
+                <text class="columna" x="636" y="254">address_street_name</text>
+                <text class="tipo" x="854" y="254" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="601" y="262" width="262" height="24"/>
+                <text class="clave clave-fk" x="610" y="278">FK</text>
+                <text class="columna columna-clave" x="636" y="278">ssn</text>
+                <text class="tipo" x="854" y="278" text-anchor="end">CHAR</text>
+                </g>
+                <g class="tabla" data-tabla="drivers_license" tabindex="0">
+                <rect class="tabla-cuerpo" x="890" y="20" width="264" height="248" rx="3"/>
+                <rect class="tabla-cabecera" x="890" y="20" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="890" y="48" width="264" height="4"/>
+                <text class="tabla-nombre" x="902" y="41">drivers_license</text>
+                <text class="clave clave-pk" x="900" y="68">PK</text>
+                <text class="columna columna-clave" x="926" y="68">id</text>
+                <text class="tipo" x="1144" y="68" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="891" y="76" width="262" height="24"/>
+                <text class="columna" x="926" y="92">age</text>
+                <text class="tipo" x="1144" y="92" text-anchor="end">INTEGER</text>
+                <text class="columna" x="926" y="116">height</text>
+                <text class="tipo" x="1144" y="116" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="891" y="124" width="262" height="24"/>
+                <text class="columna" x="926" y="140">eye_color</text>
+                <text class="tipo" x="1144" y="140" text-anchor="end">TEXT</text>
+                <text class="columna" x="926" y="164">hair_color</text>
+                <text class="tipo" x="1144" y="164" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="891" y="172" width="262" height="24"/>
+                <text class="columna" x="926" y="188">gender</text>
+                <text class="tipo" x="1144" y="188" text-anchor="end">TEXT</text>
+                <text class="columna" x="926" y="212">plate_number</text>
+                <text class="tipo" x="1144" y="212" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="891" y="220" width="262" height="24"/>
+                <text class="columna" x="926" y="236">car_make</text>
+                <text class="tipo" x="1144" y="236" text-anchor="end">TEXT</text>
+                <text class="columna" x="926" y="260">car_model</text>
+                <text class="tipo" x="1144" y="260" text-anchor="end">TEXT</text>
+                </g>
+                <g class="tabla" data-tabla="income" tabindex="0">
+                <rect class="tabla-cuerpo" x="890" y="300" width="264" height="80" rx="3"/>
+                <rect class="tabla-cabecera" x="890" y="300" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="890" y="328" width="264" height="4"/>
+                <text class="tabla-nombre" x="902" y="321">income</text>
+                <text class="clave clave-pk" x="900" y="348">PK</text>
+                <text class="columna columna-clave" x="926" y="348">ssn</text>
+                <text class="tipo" x="1144" y="348" text-anchor="end">CHAR</text>
+                <rect class="fila-par" x="891" y="356" width="262" height="24"/>
+                <text class="columna" x="926" y="372">annual_income</text>
+                <text class="tipo" x="1144" y="372" text-anchor="end">INTEGER</text>
+                </g>
+                <g class="tabla tabla-inicio" data-tabla="crime_scene_report" tabindex="0">
+                <rect class="tabla-cuerpo" x="10" y="236" width="264" height="128" rx="3"/>
+                <rect class="tabla-cabecera" x="10" y="236" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="10" y="264" width="264" height="4"/>
+                <text class="tabla-nombre" x="22" y="257">crime_scene_report</text>
+                <text class="columna" x="46" y="284">date</text>
+                <text class="tipo" x="264" y="284" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="11" y="292" width="262" height="24"/>
+                <text class="columna" x="46" y="308">type</text>
+                <text class="tipo" x="264" y="308" text-anchor="end">TEXT</text>
+                <text class="columna" x="46" y="332">description</text>
+                <text class="tipo" x="264" y="332" text-anchor="end">TEXT</text>
+                <rect class="fila-par" x="11" y="340" width="262" height="24"/>
+                <text class="columna" x="46" y="356">city</text>
+                <text class="tipo" x="264" y="356" text-anchor="end">TEXT</text>
+                </g>
+                <g class="tabla tabla-aislada" data-tabla="solution" tabindex="0">
+                <rect class="tabla-cuerpo" x="10" y="404" width="264" height="80" rx="3"/>
+                <rect class="tabla-cabecera" x="10" y="404" width="264" height="32" rx="3"/>
+                <rect class="tabla-cabecera" x="10" y="432" width="264" height="4"/>
+                <text class="tabla-nombre" x="22" y="425">solution</text>
+                <text class="columna" x="46" y="452">user</text>
+                <text class="tipo" x="264" y="452" text-anchor="end">INTEGER</text>
+                <rect class="fila-par" x="11" y="460" width="262" height="24"/>
+                <text class="columna" x="46" y="476">value</text>
+                <text class="tipo" x="264" y="476" text-anchor="end">TEXT</text>
+                </g>
+                </svg>
+            </div>
+            <p class="desliza">Desliza el diagrama hacia los lados para verlo completo.</p>
+        </section>
+
+        <!-- 3. EDITOR SQL -->
+        <section id="editor" class="hoja" aria-labelledby="t-editor">
+            <p class="paso" aria-hidden="true">3</p>
+            <h2 id="t-editor">Editor SQL</h2>
+            <p>
+                Escribe aquí tus consultas y pulsa <strong>Ejecutar</strong> (o <kbd>Mayús</kbd> + <kbd>Intro</kbd>)
+                para ver los resultados. Usa tu conocimiento del esquema y tus habilidades con SQL para averiguar
+                quién cometió el asesinato.
+            </p>
+
+            <sql-exercise
+                data-question="Resuelve el misterio"
+                data-comment="Cuando creas conocer la respuesta, pasa a la sección siguiente."
+                data-default-text="
+
+
+
+"></sql-exercise>
+        </section>
+
+        <!-- 4. COMPROBAR LA SOLUCIÓN -->
+        <section id="comprobar" class="hoja" aria-labelledby="t-comprobar">
+            <p class="paso" aria-hidden="true">4</p>
+            <h2 id="t-comprobar">Comprueba tu solución</h2>
+            <sql-exercise
+                data-question="¿Has encontrado a la persona culpable?"
+                data-comment="Sustituye el texto entre comillas por el nombre exacto de tu sospechoso y ejecuta la consulta."
+                data-default-text="INSERT INTO solution VALUES (1, 'Escribe aquí el nombre de la persona que has encontrado');
+
+SELECT value FROM solution;"></sql-exercise>
+        </section>
+
+        <footer id="creditos">
+            <p>
+                Adaptación al español realizada por Juan Luis Torralbo Muñoz del <a href="https://mystery.knightlab.com/">SQL Murder Mystery</a>,
+                creado por Joon Park y Cathy He en el Knight Lab de la Universidad Northwestern y producido
+                para la web por Joe Germuska
+                (<a href="https://github.com/NUKnightLab/sql-mysteries">repositorio original</a>).
+                El SQL en el navegador funciona gracias a <a href="https://github.com/sql-js/sql.js/">SQL.js</a>;
+                los componentes del editor son de Zi Chong Kao (<a href="https://selectstarsql.com/">Select Star SQL</a>).
+                Ilustración de <a href="https://www.vecteezy.com/">Vecteezy</a>. Tipografías Courier Prime, Public Sans
+                y JetBrains Mono, bajo licencia SIL Open Font License.
+                Código bajo licencia <a href="https://github.com/NUKnightLab/sql-mysteries/blob/master/LICENSE">MIT</a>;
+                textos y contenido bajo <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>.
+            </p>
+        </footer>
+
+    </main>
+</body>
+
+</html>
