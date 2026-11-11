@@ -22,21 +22,6 @@ JetBrains Mono, licencia SIL OFL) están en la carpeta `fonts/`, de modo que fun
 conexión. Los estilos están en `css/main.css` y las interacciones propias de la página en
 `scripts/pagina.js`.
 
-## Qué se ha traducido
-
-- El enunciado, la interfaz (botones, mensajes) y los mensajes de verificación de la solución.
-- El **contenido** de la base de datos: informes de la escena del crimen, entrevistas,
-  tipos de delito (`asesinato`, `robo`...), estados de membresía (`oro`, `plata`, `normal`),
-  género (`hombre`/`mujer`), colores de ojos y pelo (`pelirrojo`, `castaño`...) y nombres de eventos.
-- Los **identificadores** (nombres de tablas y columnas), los nombres propios de personas,
-  calles y ciudades (p. ej. `SQL City`) y los scripts se mantienen sin traducir para no romper nada.
-- Las fechas siguen siendo enteros con formato `AAAAMMDD` (p. ej. `20180115`).
-
-La solución del misterio es la misma que en el original y está verificada de principio a fin
-(el archivo `test_worker.js` reproduce el flujo completo del juego con el mismo motor
-`scripts/worker.sql.js` que usa la página; puede ejecutarse con `node test_worker.js`).
-
-
 ## Créditos y licencias
 
 Creado originalmente por Joon Park y Cathy He (Knight Lab) y producido para la web por
